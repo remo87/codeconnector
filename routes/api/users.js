@@ -7,6 +7,9 @@ const jwt = require('jsonwebtoken');
 const keys = require('../../config/keys');
 const passport = require('passport');
 
+const validateRegisterInput = require('../../validation/register');
+const validateLoginInput = require('../../validation/login');
+
 // @route GET api/users/test
 // @desc test user route
 // @access public
@@ -20,11 +23,21 @@ router.get('/test', (req, res) => {
 // @desc test user route
 // @access public
 router.post('/register', (req, res) => {
+
+    const { errors, isValid } = validateRegisterInput(req.body);
+
+    if (!isValid) {
+        return res.status(400).json({
+            errors
+        });
+    }
+
     User.findOne({ email: req.body.email })
         .then(user => {
             if (user) {
+                errors.email = 'Email already exists';
                 return res.status(400).json({
-                    email: 'Email already exists'
+                    errors
                 });
             } else {
                 const avatar = gravatar.url(req.body.email, {
@@ -56,13 +69,23 @@ router.post('/register', (req, res) => {
 // @desc login user
 // @access public
 router.post('/login', (req, res) => {
+
+    const { errors, isValid } = validateLoginInput(req.body);
+
+    if (!isValid) {
+        return res.status(400).json({
+            errors
+        });
+    }
+
     email = req.body.email;
     password = req.body.password;
 
     User.findOne({email})
         .then(user => {
             if(!user) {
-                return res.status(404).json({email: 'User not found.'});
+                errors.email = 'User not found.'
+                return res.status(404).json(errors);
             } else {
                 bcrypt.compare(password, user.password)
                     .then(isMatch => {
@@ -79,9 +102,8 @@ router.post('/login', (req, res) => {
                                 });
                             });
                         } else {
-                            return res.status(400).json({
-                                password: 'Invalid password'
-                            });
+                            errors.password = 'Invalid password';
+                            return res.status(400).json(errors);
                         }
                     });
             }
