@@ -27,6 +27,12 @@ class Login extends Component {
         this.props.loginUser(userData);
     }
 
+    componentDidMount() {
+        if (this.props.auth.isAuthenticated) {
+            this.props.history.push('/dashboard');
+        }
+    }
+
     componentWillReceiveProps(nextProps) {
         if (nextProps.auth.isAuthenticated) {
             this.props.history.push('/dashboard');
@@ -94,7 +100,7 @@ Login.propTypes = {
 
 const mapStateToProps = state => ({
     auth: state.auth,
-    errors: state.errors,
+    errors: state.errors
 })
 
 export default connect(mapStateToProps, { loginUser })(Login);
