@@ -58,7 +58,7 @@ router.get("/all", (req, res) => {
       res.json(profiles);
     })
     .catch(err => {
-      errors.profile = "There are no profiles";
+      errors.profiles = err;
       res.status(404).json(errors);
     });
 });
