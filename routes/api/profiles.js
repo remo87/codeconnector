@@ -63,10 +63,10 @@ router.get("/all", (req, res) => {
     });
 });
 
-// @route   GET api/profile/handle/:handle
+// @route   GET api/profile/:handle
 // @desc    Get profile by handle
 // @access  Public
-router.get("/handle/:handle", (req, res) => {
+router.get("/:handle", (req, res) => {
   errors = {};
 
   Profile.findOne({ handle: req.params.handle })
