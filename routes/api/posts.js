@@ -175,7 +175,7 @@ router.post(
           text: req.body.text,
           name: req.body.name,
           avatar: req.body.avatar,
-          user: req.body.id
+          user: req.user.id
         };
 
         post.comments.unshift(newComment);
@@ -199,7 +199,7 @@ router.delete(
           .map(comment => comment._id.toString())
           .indexOf(req.params.comment_id);
 
-        if (removeIndex >= 0) {
+        if (removeIndex < 0) {
           return res
             .status(404)
             .json({ commentnotexists: "comment does not exists" });
